@@ -2,9 +2,23 @@ import express, { response } from 'express'
 import rateLimiter from './middleware/redis.js'
 import client from './config/redis.js'
 import { getData } from './config/index.js'
+import helmet from 'helmet'
 
 const app = express()
 const PORT = process.env.PORT || 3000
+
+app.use(helmet())
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"], // block inline JS and external domains
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  })
+);
 
 app.get(
   '/',
